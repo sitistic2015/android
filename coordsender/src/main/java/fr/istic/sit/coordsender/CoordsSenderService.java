@@ -11,8 +11,8 @@ import android.os.Messenger;
 
 public class CoordsSenderService extends Service {
 
-    static final int MSG_ZONE = 1;
-    static final int MSG_POINT = 2;
+    public static final int MSG_ZONE = 1;
+    public static final int MSG_POINT = 2;
 
     @Override
     public void onCreate() {
@@ -41,6 +41,4 @@ public class CoordsSenderService extends Service {
     }
 
     final Messenger mMessenger = new Messenger(new IncomingHandler());
-
-
 }
