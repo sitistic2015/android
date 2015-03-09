@@ -10,15 +10,15 @@ import java.util.List;
 /**
  * Created by jules on 12/02/15.
  */
-public class Coords implements Parcelable {
+public class Coordinates implements Parcelable {
 
     private List<Pair<Double, Double>> coords;
 
-    public Coords(List<Pair<Double, Double>> coords) {
+    public Coordinates(List<Pair<Double, Double>> coords) {
         this.coords = coords;
     }
 
-    private Coords(Parcel in) {
+    private Coordinates(Parcel in) {
         coords = new ArrayList<Pair<Double, Double>>();
         double _coords [][] = (double[][])in.readArray(ClassLoader.getSystemClassLoader());
         for(int i = 0; i < _coords.length; i++) {
@@ -41,14 +41,14 @@ public class Coords implements Parcelable {
         dest.writeArray(_coords);
     }
 
-    public static final Parcelable.Creator<Coords> CREATOR
-            = new Parcelable.Creator<Coords>() {
-        public Coords createFromParcel(Parcel in) {
-            return new Coords(in);
+    public static final Parcelable.Creator<Coordinates> CREATOR
+            = new Parcelable.Creator<Coordinates>() {
+        public Coordinates createFromParcel(Parcel in) {
+            return new Coordinates(in);
         }
 
-        public Coords[] newArray(int size) {
-            return new Coords[size];
+        public Coordinates[] newArray(int size) {
+            return new Coordinates[size];
         }
     };
 
