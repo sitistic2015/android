@@ -65,7 +65,12 @@ public class CoordsSenderService extends Service {
                     //    ]
                     //}
                     try {
-                        postZone("geo/zone", coords);
+                        Message _msg = Message.obtain(null, MSG_ZONE, postZone("geo/zone", coords));
+                        try {
+                            msg.replyTo.send(_msg);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     } catch (IOException e) {
                         Message _msg = Message.obtain(null, MSG_ZONE, e.getMessage());
                         try {
