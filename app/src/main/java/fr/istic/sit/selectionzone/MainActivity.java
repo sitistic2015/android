@@ -227,7 +227,7 @@ public class MainActivity extends MapActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case CoordsSenderService.MSG_ZONE:
-                    addEventText("Received from service: " + msg.arg1);
+                    addEventText("Received from service: " + msg.obj);
                     break;
                 default:
                     super.handleMessage(msg);
@@ -255,8 +255,6 @@ public class MainActivity extends MapActivity {
             // representation of that from the raw service object.
             mService = new Messenger(service);
             addEventText("Attached.");
-
-
 
             // As part of the sample, tell the user what happened.
             Toast.makeText(MainActivity.this, "Service connected",
