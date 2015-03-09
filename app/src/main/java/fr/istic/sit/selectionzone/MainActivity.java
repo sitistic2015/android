@@ -1,6 +1,7 @@
 package fr.istic.sit.selectionzone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -33,13 +34,14 @@ public class MainActivity extends MapActivity {
     protected MapView map;
     protected LinearLayout actions;
     protected ScrollView scroller;
+    protected List<GeoPoint> polyData = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         init();
+        handleClickOnMap();
     }
 
     protected void init() {
@@ -63,38 +65,65 @@ public class MainActivity extends MapActivity {
         // enable the zoom controls
         map.setBuiltInZoomControls(true);
 
-        final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(3);
+    }
 
-        final List lineData = new ArrayList();
-        final List<GeoPoint> polyData = new ArrayList();
-        final LineOverlay lineOverlay = new LineOverlay(paint);
+    /**
+     * handle click on map
+     * put marker where it is clicked
+     * draw polyline when more than one marker
+     */
+    protected void handleClickOnMap(){
 
-        Drawable icon = getResources().getDrawable(R.drawable.location_marker);
-        final DefaultItemizedOverlay poiOverlay = new DefaultItemizedOverlay(icon);
+        final Paint paint = initLine();
+        final DefaultItemizedOverlay markers = initMarkers();
+
+        //final List<Overlay> mapOverlays = map.getOverlays();
 
         final Overlay overlay = new Overlay() {
             @Override
             public boolean onTap(GeoPoint p, MapView mapView) {
-                addEventText("touch");
-                OverlayItem poi1 = new OverlayItem(p,"Hello","Hi");
-                poiOverlay.addItem(poi1);
-                polyData.add(p);
+                OverlayItem marker = new OverlayItem(p,"","");
+                markers.addItem(marker);
+                polyData.add(marker.getPoint());
 
                 if (polyData.size()==1) {
                     PolygonOverlay polygonOverlay = new PolygonOverlay(paint);
                     polygonOverlay.setData(polyData);
-                    map.getOverlays().add(polygonOverlay);
+                    //map.getOverlays().add(polygonOverlay);
                 }
 
                 return super.onTap(p, mapView);
             }
         };
 
-        map.getOverlays().add(poiOverlay);
+        map.getOverlays().add(markers);
         map.getOverlays().add(overlay);
+    }
+
+    protected Paint initLine(){
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.BLUE);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        return paint;
+    }
+
+    protected DefaultItemizedOverlay initMarkers(){
+        Drawable icon = getResources().getDrawable(R.drawable.location_marker);
+        final DefaultItemizedOverlay markers = new DefaultItemizedOverlay(icon);
+        return markers;
+    }
+
+    public void validateCoords(View view){
+        List<Coord> coords = new ArrayList();
+
+        for (GeoPoint point : polyData){
+            coords.add(new Coord(point.getLatitude(),point.getLongitude()));
+        }
+
+        for (Coord coord : coords){
+            addEventText("Point : "+coord.getLatitude()+","+coord.getLongitude());
+        }
 
     }
 
