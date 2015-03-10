@@ -27,6 +27,8 @@ public class RequesterService extends Service {
 
     public static final int MSG_ZONE = 1;
     public static final int MSG_POINT = 2;
+    public static final int MSG_IMG = 3;
+    public static final int MSG_AGENTS = 4;
 
     @Override
     public void onCreate() {
@@ -53,6 +55,13 @@ public class RequesterService extends Service {
                     coordinates = msg.getData().getParcelable("coord");
                     new RequestTask(MSG_ZONE, coordinates, msg.replyTo).execute();
                     break;
+                case MSG_IMG:
+                    //ask server for images
+                    new RequestTask(MSG_IMG, msg.replyTo).execute();
+                    break;
+                case MSG_AGENTS:
+                    //ask server for agents
+                    new RequestTask(MSG_AGENTS, msg.replyTo).execute();
                 default:
                     super.handleMessage(msg);
             }
