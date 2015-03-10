@@ -5,4 +5,13 @@ package entity;
  */
 public abstract class Entity {
     protected String id;
+    protected String type;
+
+    public String getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
+    }
 }
