@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 
 import com.mapquest.android.maps.DefaultItemizedOverlay;
 import com.mapquest.android.maps.GeoPoint;
-import com.mapquest.android.maps.LineOverlay;
 import com.mapquest.android.maps.MapActivity;
 import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.Overlay;
@@ -37,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.istic.sit.coordsender.Coordinates;
-import fr.istic.sit.coordsender.CoordsSenderService;
+import fr.istic.sit.coordsender.RequesterService;
 
 
 public class MainActivity extends MapActivity {
@@ -158,7 +156,7 @@ public class MainActivity extends MapActivity {
 
         try {
             Message msg = Message.obtain(null,
-                    CoordsSenderService.MSG_ZONE);
+                    RequesterService.MSG_ZONE);
             msg.replyTo = mMessenger;
             Bundle bundle = new Bundle();
             bundle.putParcelable("coord",coordinates);
@@ -226,7 +224,7 @@ public class MainActivity extends MapActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case CoordsSenderService.MSG_ZONE:
+                case RequesterService.MSG_ZONE:
                     addEventText("Received from service: " + msg.obj);
                     break;
                 default:
@@ -278,7 +276,7 @@ public class MainActivity extends MapActivity {
         // class name because there is no reason to be able to let other
         // applications replace our component.
         bindService(new Intent(MainActivity.this,
-                CoordsSenderService.class), mConnection, Context.BIND_AUTO_CREATE);
+                RequesterService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
         addEventText("Binding.");
     }
@@ -290,7 +288,7 @@ public class MainActivity extends MapActivity {
             if (mService != null) {
                 try {
                     Message msg = Message.obtain(null,
-                            CoordsSenderService.MSG_ZONE);
+                            RequesterService.MSG_ZONE);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                 } catch (RemoteException e) {

@@ -23,7 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class CoordsSenderService extends Service {
+public class RequesterService extends Service {
 
     public static final int MSG_ZONE = 1;
     public static final int MSG_POINT = 2;
@@ -41,15 +41,17 @@ public class CoordsSenderService extends Service {
     class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            Coordinates coords = msg.getData().getParcelable("coord");
+            Coordinates coordinates;
             switch (msg.what) {
                 case MSG_POINT:
                     //send point to the server
-                    new RequestTask(MSG_POINT, coords, msg.replyTo).execute();
+                    coordinates = msg.getData().getParcelable("coord");
+                    new RequestTask(MSG_POINT, coordinates, msg.replyTo).execute();
                     break;
                 case MSG_ZONE:
                     //send zone to the server
-                    new RequestTask(MSG_ZONE, coords, msg.replyTo).execute();
+                    coordinates = msg.getData().getParcelable("coord");
+                    new RequestTask(MSG_ZONE, coordinates, msg.replyTo).execute();
                     break;
                 default:
                     super.handleMessage(msg);
