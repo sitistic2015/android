@@ -5,8 +5,11 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.ParseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -22,7 +25,7 @@ import java.io.UnsupportedEncodingException;
  */
 class RequestTask extends AsyncTask<String, String, String> {
 
-    private static final String URL = "http://148.60.14.34:8088/";
+    private static final String URL = "http://5.135.185.191:8080/georestservice/rest/";
 
     private final Coordinates coordinates;
     private final int request;
@@ -39,13 +42,13 @@ class RequestTask extends AsyncTask<String, String, String> {
         switch(request) {
             case RequesterService.MSG_ZONE:
                 try {
-                    return postZone("zone/", coordinates);
+                    return postZone("geoposition/zoneObject", coordinates);
                 } catch (IOException e) {
                     return e.getMessage();
                 }
             case RequesterService.MSG_POINT:
                 try {
-                    return postPoint("geoposition/" + coordinates.getCoordinates().get(0).first + "/" + coordinates.getCoordinates().get(0).second);
+                    return postPoint("geoposition/point/" + coordinates.getCoordinates().get(0).first + "/" + coordinates.getCoordinates().get(0).second);
                 } catch (IOException e) {
                     return e.getMessage();
                 }
@@ -54,20 +57,37 @@ class RequestTask extends AsyncTask<String, String, String> {
     }
 
     private String formatZone(Coordinates coordinates) {
-        String stringCoordinates = "{\"type\": \"Polygon\", \"coordinates\":[";
+        String stringCoordinates = "{\"type\": \"Polygon\", \"coordinates\":[[";
         for(int i = 0; i < coordinates.getCoordinates().size() - 1; i++) {
-            stringCoordinates += "[" + coordinates.getCoordinates().get(i).first + ", " + coordinates.getCoordinates().get(i).second + "]";
+            stringCoordinates += "[" + coordinates.getCoordinates().get(i).first + ", " + coordinates.getCoordinates().get(i).second + "],";
         }
-        stringCoordinates += "[" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", " + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "],";
+        stringCoordinates += "[" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", " + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "]";
         stringCoordinates += "]]}";
+        System.out.println(stringCoordinates);
         return stringCoordinates;
     }
 
     private String postZone(String args, Coordinates coordinates) throws IOException {
         HttpPost request = new HttpPost(URL + args);
         try {
+            request.setHeader(new Header() {
+                @Override
+                public String getName() {
+                    return "content-type";
+                }
+
+                @Override
+                public String getValue() {
+                    return "application/json";
+                }
+
+                @Override
+                public HeaderElement[] getElements() throws ParseException {
+                    return new HeaderElement[0];
+                }
+            });
             request.setEntity(new ByteArrayEntity(
-                    formatZone(coordinates).getBytes("UTF8")));
+                            formatZone(coordinates).getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -91,7 +111,7 @@ class RequestTask extends AsyncTask<String, String, String> {
         } else{
             //Closes the connection.
             response.getEntity().getContent().close();
-            throw new IOException(statusLine.getReasonPhrase());
+            throw new IOException(statusLine.getStatusCode()+"\n"+statusLine.getReasonPhrase());
         }
     }
 
