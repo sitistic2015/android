@@ -30,6 +30,6 @@ public abstract class AbstractDAO<Entity> {
     }
 
     protected static void create(Entity e) {
-        
+
     }
 }
