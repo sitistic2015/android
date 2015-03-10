@@ -28,4 +28,8 @@ public abstract class AbstractDAO<Entity> {
         // Disconnect from the cluster
         currentCluster.disconnect();
     }
+
+    protected static void create(Entity e) {
+        
+    }
 }
