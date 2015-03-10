@@ -22,15 +22,15 @@ import java.io.UnsupportedEncodingException;
  */
 class RequestTask extends AsyncTask<String, String, String> {
 
-    private static final String URL = "148.60.14.34:8088";
+    private static final String URL = "http://148.60.14.34:8088/";
 
-    private final Coordinates coords;
+    private final Coordinates coordinates;
     private final int request;
     private final Messenger replyTo;
 
-    public RequestTask(int request, Coordinates coords, Messenger replyTo) {
+    public RequestTask(int request, Coordinates coordinates, Messenger replyTo) {
         this.request = request;
-        this.coords = coords;
+        this.coordinates = coordinates;
         this.replyTo = replyTo;
     }
 
@@ -39,13 +39,13 @@ class RequestTask extends AsyncTask<String, String, String> {
         switch(request) {
             case RequesterService.MSG_ZONE:
                 try {
-                    return postZone("geo/zone", coords);
+                    return postZone("zone/", coordinates);
                 } catch (IOException e) {
                     return e.getMessage();
                 }
             case RequesterService.MSG_POINT:
                 try {
-                    return postPoint("geo/geoposition/" + coords.getCoordinates().get(0).first + "/" + coords.getCoordinates().get(0).second);
+                    return postPoint("geoposition/" + coordinates.getCoordinates().get(0).first + "/" + coordinates.getCoordinates().get(0).second);
                 } catch (IOException e) {
                     return e.getMessage();
                 }
@@ -54,20 +54,20 @@ class RequestTask extends AsyncTask<String, String, String> {
     }
 
     private String formatZone(Coordinates coordinates) {
-        String stringCoords = "{\"type\": \"Polygon\", \"coordinates\":[";
+        String stringCoordinates = "{\"type\": \"Polygon\", \"coordinates\":[";
         for(int i = 0; i < coordinates.getCoordinates().size() - 1; i++) {
-            stringCoords += "[" + coordinates.getCoordinates().get(i).first + ", " + coordinates.getCoordinates().get(i).second + "],";
+            stringCoordinates += "[" + coordinates.getCoordinates().get(i).first + ", " + coordinates.getCoordinates().get(i).second + "]";
         }
-        stringCoords += "[" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", " + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "],";
-        stringCoords += "]]}";
-        return stringCoords;
+        stringCoordinates += "[" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", " + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "],";
+        stringCoordinates += "]]}";
+        return stringCoordinates;
     }
 
-    private String postZone(String args, Coordinates coords) throws IOException {
+    private String postZone(String args, Coordinates coordinates) throws IOException {
         HttpPost request = new HttpPost(URL + args);
         try {
             request.setEntity(new ByteArrayEntity(
-                    formatZone(coords).getBytes("UTF8")));
+                    formatZone(coordinates).getBytes("UTF8")));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
