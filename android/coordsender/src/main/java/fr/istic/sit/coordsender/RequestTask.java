@@ -27,13 +27,18 @@ class RequestTask extends AsyncTask<String, String, String> {
 
     private static final String URL = "http://5.135.185.191:8080/georestservice/rest/";
 
-    private final Coordinates coordinates;
+    private Coordinates coordinates;
     private final int request;
     private final Messenger replyTo;
 
     public RequestTask(int request, Coordinates coordinates, Messenger replyTo) {
-        this.request = request;
         this.coordinates = coordinates;
+        this.request = request;
+        this.replyTo = replyTo;
+    }
+
+    public RequestTask(int request, Messenger replyTo) {
+        this.request = request;
         this.replyTo = replyTo;
     }
 
@@ -52,6 +57,19 @@ class RequestTask extends AsyncTask<String, String, String> {
                 } catch (IOException e) {
                     return e.getMessage();
                 }
+            case RequesterService.MSG_IMG:
+                //TODO put the right address
+                try {
+                    return post(new HttpPost("ouestcequontrouvelesimages"));
+                } catch (IOException e) {
+                    return e.getMessage();
+                }
+            case RequesterService.MSG_AGENTS:
+                try {
+                    return post(new HttpPost("ouestcequontrouvelesagents"));
+                } catch (IOException e) {
+                    return e.getMessage();
+            }
             default:return null;
         }
     }
@@ -70,22 +88,6 @@ class RequestTask extends AsyncTask<String, String, String> {
     private String postZone(String args, Coordinates coordinates) throws IOException {
         HttpPost request = new HttpPost(URL + args);
         try {
-            request.setHeader(new Header() {
-                @Override
-                public String getName() {
-                    return "content-type";
-                }
-
-                @Override
-                public String getValue() {
-                    return "application/json";
-                }
-
-                @Override
-                public HeaderElement[] getElements() throws ParseException {
-                    return new HeaderElement[0];
-                }
-            });
             request.setEntity(new ByteArrayEntity(
                             formatZone(coordinates).getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
@@ -99,6 +101,22 @@ class RequestTask extends AsyncTask<String, String, String> {
         return post(request);
     }
     private String post(HttpPost request) throws IOException {
+        request.setHeader(new Header() {
+            @Override
+            public String getName() {
+                return "content-type";
+            }
+
+            @Override
+            public String getValue() {
+                return "application/json";
+            }
+
+            @Override
+            public HeaderElement[] getElements() throws ParseException {
+                return new HeaderElement[0];
+            }
+        });
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response = httpclient.execute(request);
         StatusLine statusLine = response.getStatusLine();
