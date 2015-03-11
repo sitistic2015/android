@@ -5,7 +5,16 @@ package entity;
  */
 public abstract class Entity {
     protected String id;
+
     protected String type;
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return id;
