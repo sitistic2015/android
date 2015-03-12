@@ -6,8 +6,6 @@ package entity;
  */
 
 public class Position {
-
-
     //@JsonDeserialize(using = LngLatAltDeserializer.class)
    // @JsonSerialize(using = LngLatAltSerializer.class)
 
