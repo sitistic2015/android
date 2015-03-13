@@ -1,6 +1,5 @@
 package dao;
 
-import com.couchbase.client.java.CouchbaseCluster;
 import entity.Position;
 import entity.Unity;
 import org.junit.*;
@@ -19,8 +18,8 @@ public class AbstractDAOUnityTest {
     public static void beforeAllTests()
     {
         HashMap<String,String> configs= new HashMap<String,String>();
-        configs.put("COUCHBASE_HOSTNAME","localhost:8091");
-        configs.put("BUCKET_NAME","tests");
+        configs.put("COUCHBASE_HOSTNAME","37.59.58.42");
+        configs.put("BUCKET_NAME","test");
         Configuration.loadConfigurations(configs);
     }
 
