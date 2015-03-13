@@ -4,10 +4,10 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.document.JsonDocument;
+import com.couchbase.client.java.error.FlushDisabledException;
 import entity.AbstractEntity;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import util.Configuration;
-import util.Constant;
 
 import java.util.List;
 
@@ -18,37 +18,43 @@ import java.util.List;
  */
 public abstract class AbstractDAO<T extends AbstractEntity> {
     /**
-     * CurrentConnection
+     * Current Connection
      */
-    protected static Cluster currentCluster;
+    protected Cluster currentCluster;
 
-    protected static String type;
     /**
-     * public constructor for singleton
+     * Current Bucket
      */
-    public AbstractDAO() {
+    protected Bucket currentBucket;
 
-    }
+    /**
+     * Type of T
+     */
+    protected String type;
 
     /**
      * Connect to BDD and
      * @return Bucket to communicate with couchbase
      */
-    protected final static Bucket connect() {
-        // Connect to a cluster
-        currentCluster = CouchbaseCluster.create(Configuration.COUCHBASE_HOSTNAME);
+    protected final void connect() {
+        if(currentCluster == null || currentBucket==null) {
+            // Connect to a cluster
+            currentCluster = CouchbaseCluster.create(Configuration.COUCHBASE_HOSTNAME);
 
-        // Open the default bucket
-        Bucket bucket = currentCluster.openBucket(Configuration.BUCKET_NAME);
-        return bucket;
+            // Open a bucket
+            currentBucket = currentCluster.openBucket(Configuration.BUCKET_NAME);
+        }
     }
 
     /**
      * Disconnect BDD
      */
-    protected final static void disconnect() {
-        // Disconnect from the cluster
-        currentCluster.disconnect();
+    protected final void disconnect() {
+        if(currentCluster != null)
+        {
+            currentCluster.disconnect();
+            currentBucket =null;
+        }
     }
 
     /**
@@ -56,9 +62,7 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
      * @param e entity to create
      */
     public final T create(T e) {
-        Bucket bucket = connect();
-        JsonDocument res = bucket.insert(entityToJsonDocument(e));
-        disconnect();
+        JsonDocument res = currentBucket.insert(entityToJsonDocument(e));
         return jsonDocumentToEntity(res);
     }
 
@@ -67,9 +71,7 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
      * @param e
      */
     public final T delete(T e) {
-        Bucket bucket = connect();
-        JsonDocument res = bucket.remove(""+e.getId());
-        disconnect();
+        JsonDocument res = currentBucket.remove(""+e.getId());
         return jsonDocumentToEntity(res);
     }
 
@@ -78,9 +80,7 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
      * @param e
      */
     public final T update(T e) {
-        Bucket bucket = connect();
-        JsonDocument res = bucket.upsert(entityToJsonDocument(e));
-        disconnect();
+        JsonDocument res = currentBucket.upsert(entityToJsonDocument(e));
         return jsonDocumentToEntity(res);
     }
 
@@ -99,19 +99,42 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
      */
     public final T getById(long id)
     {
-        Bucket bucket = connect();
-        JsonDocument res = bucket.get(""+id);
-        disconnect();
+        JsonDocument res = currentBucket.get(""+id);
         return jsonDocumentToEntity(res);
     }
 
     /**
-     * Transform a jsonDocument
-     * @param jsonDocument document to transform
+     * flush our bucket
      * @return
+     */
+    public boolean flush()
+    {
+        if(currentBucket!=null && currentCluster!=null)
+        {
+            try
+            {
+                return currentBucket.bucketManager().flush();
+            }
+            catch (FlushDisabledException e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Transform a jsonDocument to entity
+     * @param jsonDocument document to transform
+     * @return entity of JsonDocument
      */
     public abstract T jsonDocumentToEntity(JsonDocument jsonDocument);
 
+    /**
+     * Transform an entity to JsonDocument
+     * @param entity to transform
+     * @return jsonDoc of entity
+     */
     public abstract JsonDocument entityToJsonDocument(T entity);
-
 }
