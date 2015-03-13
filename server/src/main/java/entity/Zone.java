@@ -13,6 +13,14 @@ public class Zone {
     public Zone() {
     }
 
+    public List<Position> getPositions() {
+        return positions;
+    }
+
+    public void setPositions(List<Position> positions) {
+        this.positions = positions;
+    }
+
     List<Position> positions = new ArrayList<Position>();
 
     public Iterator<Position> positionIterator() {

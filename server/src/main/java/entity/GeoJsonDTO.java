@@ -8,12 +8,11 @@ import java.util.List;
 /**
  * Created by arno on 09/03/15.
  */
-
 public class GeoJsonDTO implements Serializable {
 
     private String type;
     //    private Zone zone;
-    List<Zone> zoneList = new ArrayList<Zone>();
+    List<Zone> coordinates = new ArrayList<Zone>();
 //    private List<List<List<Double>>> coordinates = new ArrayList<List<List<Double>>>();
 
     public GeoJsonDTO() {
@@ -28,12 +27,16 @@ public class GeoJsonDTO implements Serializable {
         this.type = type;
     }
 
-    public List<Zone> getZoneList() {
-        return new ArrayList<Zone>(zoneList);
+    public List<Zone> getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(List<Zone> coordinates) {
+        this.coordinates = coordinates;
     }
 
     public void addZone(Zone zone) {
-        this.zoneList.add(zone);
+        this.coordinates.add(zone);
     }
 
     //
