@@ -1,10 +1,12 @@
 package util;
 
 import com.couchbase.client.java.document.JsonDocument;
+import com.couchbase.client.java.document.json.JsonArray;
 import com.couchbase.client.java.document.json.JsonObject;
 import entity.AbstractEntity;
 import entity.Position;
 import entity.Unity;
+import entity.Zone;
 
 /**
  * Created by corentin on 10/03/15.
@@ -39,5 +41,19 @@ public class Tools {
         p.setLatitude((Double)jsonObject.get("latitude"));
         p.setLongitude((Double)jsonObject.get("longitude"));
         return p;
+    }
+
+    public static Zone jsonArrayToZone(JsonArray jsonArray) {
+        Zone z = new Zone();
+        for(int i=0; i<jsonArray.size();i++) {
+            z.addPosition(Tools.jsonObjectToPosition((JsonObject)jsonArray.get(i)));
+
+        }
+        return z;
+    }
+
+    public static JsonArray zoneToJsonArray(Zone zone) {
+        JsonArray array = JsonArray.create();
+        return null;
     }
 }

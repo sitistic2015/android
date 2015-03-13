@@ -1,6 +1,8 @@
 package entity;
 
 
+import util.Constant;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,23 +11,15 @@ import java.util.List;
  * Created by arno on 09/03/15.
  */
 
-public class GeoJsonDTO implements Serializable {
+public class GeoJsonDTO extends AbstractEntity implements Serializable {
 
-    private String type;
     //    private Zone zone;
     List<Zone> zoneList = new ArrayList<Zone>();
 //    private List<List<List<Double>>> coordinates = new ArrayList<List<List<Double>>>();
 
     public GeoJsonDTO() {
-    }
-
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+        super();
+        this.type = Constant.TYPE_GEOJSONDTO;
     }
 
     public List<Zone> getZoneList() {
