@@ -9,6 +9,10 @@ public class Configuration {
     public static String BUCKET_NAME;
     public static String COUCHBASE_HOSTNAME;
 
+    /**
+     * Load configurations
+     * @param configs
+     */
     public static void loadConfigurations(Map<String,String> configs)
     {
         BUCKET_NAME = configs.get("BUCKET_NAME");
