@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.mapquest.android.maps.DefaultItemizedOverlay;
 import com.mapquest.android.maps.GeoPoint;
+import com.mapquest.android.maps.LineOverlay;
 import com.mapquest.android.maps.MapActivity;
 import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.Overlay;
@@ -70,6 +71,12 @@ public class MainActivity extends MapActivity {
         doUnbindService();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        doUnbindService();
+    }
+
     protected void init() {
         this.setupMapView(new GeoPoint(48.12,-1.67), 12);
         this.actions=(LinearLayout)findViewById(R.id.actions);
@@ -100,24 +107,26 @@ public class MainActivity extends MapActivity {
      */
     protected void handleClickOnMap(){
 
-        final Paint paint = initLine();
         final DefaultItemizedOverlay markers = initMarkers();
 
-        //final List<Overlay> mapOverlays = map.getOverlays();
-
         final Overlay overlay = new Overlay() {
+
+            int countMarker = 0;
+            PolygonOverlay polygonOverlay = new PolygonOverlay(initLinePaint());
+
+            /**
+             * handle click on map
+             */
             @Override
             public boolean onTap(GeoPoint p, MapView mapView) {
                 OverlayItem marker = new OverlayItem(p,"","");
                 markers.addItem(marker);
-                polyData.add(marker.getPoint());
-
+                polyData.add(p);
+                countMarker++;
                 if (polyData.size()==1) {
-                    PolygonOverlay polygonOverlay = new PolygonOverlay(paint);
                     polygonOverlay.setData(polyData);
-                    //map.getOverlays().add(polygonOverlay);
+                    map.getOverlays().add(polygonOverlay);
                 }
-
                 return super.onTap(p, mapView);
             }
         };
@@ -126,7 +135,7 @@ public class MainActivity extends MapActivity {
         map.getOverlays().add(overlay);
     }
 
-    protected Paint initLine(){
+    protected Paint initLinePaint(){
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.STROKE);
@@ -142,6 +151,12 @@ public class MainActivity extends MapActivity {
 
     public void validateCoords(View view){
         List<Pair<Double,Double>> coords = new ArrayList();
+        polyData.add(polyData.get(0));
+
+
+        for (Overlay overlay : map.getOverlays()){
+            System.out.println(overlay);
+        }
 
         for (GeoPoint point : polyData) {
             coords.add(new Pair<Double, Double>(point.getLatitude(), point.getLongitude()));

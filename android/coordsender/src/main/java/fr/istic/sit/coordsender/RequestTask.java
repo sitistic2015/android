@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
  */
 class RequestTask extends AsyncTask<String, String, String> {
 
-    private static final String URL = "http://5.135.185.191:8080/georestservice/rest/";
+    private static final String URL = "http://37.59.58.42:8080/sitserver/rest/";
 
     private final Coordinates coordinates;
     private final int request;
