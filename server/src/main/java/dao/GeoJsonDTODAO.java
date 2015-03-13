@@ -43,7 +43,7 @@ public class GeoJsonDTODAO extends AbstractDAO<GeoJsonDTO>{
     public JsonDocument entityToJsonDocument(GeoJsonDTO entity) {
         JsonObject jsonUser = JsonObject.empty()
                 .put("type", entity.getType())
-                .put("zone", Tools.zoneToJsonArray(entity.getZoneList().get(0)));
+                .put("zone", Tools.zoneToJsonArray(entity.getCoordinates().get(0)));
         JsonDocument doc = JsonDocument.create(""+entity.getId(), jsonUser);
         return doc;
     }

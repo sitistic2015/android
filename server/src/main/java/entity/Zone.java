@@ -10,6 +10,13 @@ import java.util.List;
  */
 public class Zone {
 
+    public Zone() {
+    }
+
+    public List<Position> getPositions() {
+        return positions;
+    }
+
     List<Position> positions = new ArrayList<Position>();
 
     public Iterator<Position> positionIterator() {
