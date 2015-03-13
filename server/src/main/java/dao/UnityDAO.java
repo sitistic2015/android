@@ -8,14 +8,23 @@ import util.Tools;
 
 /**
  * Created by alban on 12/03/15.
+ * DAO pour @see Unity
  */
 public class UnityDAO extends AbstractDAO<Unity> {
 
+    /**
+     * Contructeur UnityDAO
+     */
     public UnityDAO()
     {
         this.type = Constant.TYPE_UNITY;
     }
 
+    /**
+     * Transform un jsondoc en Unity
+     * @param jsonDocument document to transform
+     * @return
+     */
     @Override
     public Unity jsonDocumentToEntity(JsonDocument jsonDocument) {
         Unity u = new Unity();
@@ -37,6 +46,11 @@ public class UnityDAO extends AbstractDAO<Unity> {
         return u;
     }
 
+    /**
+     * Tr
+     * @param u
+     * @return
+     */
     @Override
     public JsonDocument entityToJsonDocument(Unity u) {
         JsonObject jsonUser = JsonObject.empty()

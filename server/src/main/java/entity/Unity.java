@@ -10,6 +10,9 @@ public class Unity extends AbstractEntity{
     private Position unitPosition;
     private String name;
 
+    /**
+     * Basic contruct, assign type
+     */
     public Unity()
     {
         super();

@@ -1,6 +1,5 @@
 package dao;
 
-import com.couchbase.client.java.CouchbaseCluster;
 import entity.Position;
 import entity.Unity;
 import org.junit.*;
@@ -14,29 +13,30 @@ import static org.junit.Assert.assertEquals;
  * Created by alban on 11/03/15.
  */
 public class AbstractDAOUnityTest {
-
+    private static UnityDAO dao;
     @BeforeClass
     public static void beforeAllTests()
     {
         HashMap<String,String> configs= new HashMap<String,String>();
-        configs.put("COUCHBASE_HOSTNAME","localhost:8091");
-        configs.put("BUCKET_NAME","tests");
+        configs.put("COUCHBASE_HOSTNAME","37.59.58.42");
+        configs.put("BUCKET_NAME","test");
         Configuration.loadConfigurations(configs);
+        dao = new UnityDAO();
+        dao.connect();
     }
 
     @AfterClass
     public static void afterAllTests()
     {
-        //CouchbaseCluster.create(Configuration.COUCHBASE_HOSTNAME).openBucket("e").;
+        dao.disconnect();
     }
     @Before
-    public void setUp() throws Exception {
+    public void beforeTest() throws Exception {
 
     }
 
     @After
-    public void tearDown() {
-
+    public void afterTest() {
 
     }
 
@@ -47,7 +47,7 @@ public class AbstractDAOUnityTest {
         Unity unity = new Unity();
         unity.setUnitPosition(new Position(4.0, 9.0, 19.0));
         unity.setName("Françis");
-        UnityDAO dao = new UnityDAO();
+
         Unity res = dao.create(unity);
         assertEquals(unity, res);
         assertEquals(unity.getId(), res.getId());
@@ -60,7 +60,6 @@ public class AbstractDAOUnityTest {
         Unity unity = new Unity();
         unity.setUnitPosition(new Position(4.0, 9.0, 19.0));
         unity.setName("André-Jacques");
-        UnityDAO dao = new UnityDAO();
         Unity res = dao.create(unity);
         long idInbase = res.getId();
         assertEquals(unity, res);
@@ -82,15 +81,12 @@ public class AbstractDAOUnityTest {
         Unity unity = new Unity();
         unity.setUnitPosition(new Position(4.0, 9.0, 19.0));
         unity.setName("Vivien Lelouette de Saint-Coulomb");
-        UnityDAO dao = new UnityDAO();
         Unity res = dao.create(unity);
         long idInbase = res.getId();
         assertEquals(unity, res);
         assertEquals(unity.getId(), res.getId());
-
         // suppression
         dao.delete(unity);
         dao.getById(idInbase);
-
     }
 }
