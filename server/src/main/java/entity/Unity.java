@@ -1,17 +1,22 @@
 package entity;
 
+import util.Constant;
+
 /**
  * The interventions units.
  * Created by corentin on 10/03/15.
  */
-public class Unity {
-    private long id;
-    private String unitType;
+public class Unity extends AbstractEntity{
     private Position unitPosition;
+    private String name;
 
+    public Unity()
+    {
+        super();
+        this.type = Constant.TYPE_UNITY;
+    }
     /**
-     * Unity position getter
-     *
+     * Unity position getter     *
      * @return Position
      */
     public Position getUnitPosition() {
@@ -19,47 +24,49 @@ public class Unity {
     }
 
     /**
-     * Unity position setter
-     *
+     * Unity position setter     *
      * @param unitPosition Position
      */
     public void setUnitPosition(Position unitPosition) {
         this.unitPosition = unitPosition;
     }
 
-    /**
-     * Unity type getter
-     *
-     * @return String
-     */
-    public String getUnitType() {
-        return unitType;
+    public void setName(String newName)
+    {
+        this.name = newName;
     }
 
-    /**
-     * Unity type setter
-     *
-     * @param unitType String
-     */
-    public void setUnitType(String unitType) {
-        this.unitType = unitType;
+    @Override
+    public String toString() {
+        return "Unity{"  +
+                "type='" + type + "\'" +
+                ", unitPosition=" + unitPosition +
+                ", name='" + name + '\'' +
+                '}';
     }
 
-    /**
-     * Unity ID getter
-     *
-     * @return long
-     */
-    public long getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Unity unity = (Unity) o;
+
+        if (name != null ? !name.equals(unity.name) : unity.name != null) return false;
+        if (unitPosition != null ? !unitPosition.equals(unity.unitPosition) : unity.unitPosition != null) return false;
+        if (type != null ? !type.equals(unity.type) : unity.type != null) return false;
+        return true;
     }
 
-    /**
-     * Unity ID setter
-     *
-     * @param id long
-     */
-    public void setId(long id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        int result = unitPosition != null ? unitPosition.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 }

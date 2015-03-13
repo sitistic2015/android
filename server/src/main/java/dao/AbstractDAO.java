@@ -3,10 +3,11 @@ package dao;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
-import entity.Entity;
+import com.couchbase.client.java.document.JsonDocument;
+import entity.AbstractEntity;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import util.Configuration;
 import util.Constant;
-import util.Tools;
 
 import java.util.List;
 
@@ -15,50 +16,102 @@ import java.util.List;
  * AbstractDAO provides methods for DAO
  * Also use for connect and disconnect
  */
-public abstract class AbstractDAO<T extends Entity> {
+public abstract class AbstractDAO<T extends AbstractEntity> {
+    /**
+     * CurrentConnection
+     */
     protected static Cluster currentCluster;
-    private static AbstractDAO instance;
 
-    private AbstractDAO() {}
+    protected static String type;
+    /**
+     * public constructor for singleton
+     */
+    public AbstractDAO() {
 
-    public static AbstractDAO getInstance() {
-        return instance;
     }
 
-
-    protected static Bucket connect() {
+    /**
+     * Connect to BDD and
+     * @return Bucket to communicate with couchbase
+     */
+    protected final static Bucket connect() {
         // Connect to a cluster
-        currentCluster = CouchbaseCluster.create(Constant.COUCHBASE_HOSTNAME);
+        currentCluster = CouchbaseCluster.create(Configuration.COUCHBASE_HOSTNAME);
 
         // Open the default bucket
-        Bucket bucket = currentCluster.openBucket(Constant.BUCKET_NAME);
+        Bucket bucket = currentCluster.openBucket(Configuration.BUCKET_NAME);
         return bucket;
     }
 
-    protected static void disconnect() {
+    /**
+     * Disconnect BDD
+     */
+    protected final static void disconnect() {
         // Disconnect from the cluster
         currentCluster.disconnect();
     }
 
-    public void create(T e) {
+    /**
+     * Create an entity
+     * @param e entity to create
+     */
+    public final T create(T e) {
         Bucket bucket = connect();
-        bucket.insert(Tools.entityToJsonDocument(e));
+        JsonDocument res = bucket.insert(entityToJsonDocument(e));
         disconnect();
+        return jsonDocumentToEntity(res);
     }
 
-    public void remove(T e) {
+    /**
+     * Delete an entity
+     * @param e
+     */
+    public final T delete(T e) {
         Bucket bucket = connect();
-        bucket.remove(e.getId());
+        JsonDocument res = bucket.remove(""+e.getId());
         disconnect();
+        return jsonDocumentToEntity(res);
     }
 
-    public void update(T e) {
+    /**
+     * Update entity
+     * @param e
+     */
+    public final T update(T e) {
         Bucket bucket = connect();
-        bucket.upsert(Tools.entityToJsonDocument(e));
+        JsonDocument res = bucket.upsert(entityToJsonDocument(e));
         disconnect();
+        return jsonDocumentToEntity(res);
     }
 
-    public List<T> getAll() throws NotImplementedException {
+    /**
+     * GetAll
+     * @return
+     */
+    public final List<T> getAll()
+    {
         throw new NotImplementedException();
     }
+
+    /**
+     * GetById
+     * @return
+     */
+    public final T getById(long id)
+    {
+        Bucket bucket = connect();
+        JsonDocument res = bucket.get(""+id);
+        disconnect();
+        return jsonDocumentToEntity(res);
+    }
+
+    /**
+     * Transform a jsonDocument
+     * @param jsonDocument document to transform
+     * @return
+     */
+    public abstract T jsonDocumentToEntity(JsonDocument jsonDocument);
+
+    public abstract JsonDocument entityToJsonDocument(T entity);
+
 }
