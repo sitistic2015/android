@@ -12,6 +12,7 @@ import java.util.List;
 public class GeoJsonDTO implements Serializable {
 
     private String type;
+    private Coordinate coordinate;
     private List<List<List<Double>>> coordinates = new ArrayList<List<List<Double>>>();
 
     public GeoJsonDTO() {
