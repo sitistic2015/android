@@ -12,11 +12,13 @@ import java.util.List;
 public class GeoJsonDTO implements Serializable {
 
     private String type;
-    private Coordinate coordinate;
-    private List<List<List<Double>>> coordinates = new ArrayList<List<List<Double>>>();
+    //    private Zone zone;
+    List<Zone> zoneList = new ArrayList<Zone>();
+//    private List<List<List<Double>>> coordinates = new ArrayList<List<List<Double>>>();
 
     public GeoJsonDTO() {
     }
+
 
     public String getType() {
         return type;
@@ -26,13 +28,22 @@ public class GeoJsonDTO implements Serializable {
         this.type = type;
     }
 
-    public List<List<List<Double>>> getCoordinates() {
-        return coordinates;
+    public List<Zone> getZoneList() {
+        return new ArrayList<Zone>(zoneList);
     }
 
-    public void setCoordinates(List<List<List<Double>>> coordinates) {
-        this.coordinates = coordinates;
+    public void addZone(Zone zone) {
+        this.zoneList.add(zone);
     }
+
+    //
+//    public List<List<List<Double>>> getCoordinates() {
+//        return coordinates;
+//    }
+//
+//    public void setCoordinates(List<List<List<Double>>> coordinates) {
+//        this.coordinates = coordinates;
+//    }
 }
 
 

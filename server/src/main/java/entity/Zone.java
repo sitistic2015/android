@@ -10,33 +10,19 @@ import java.util.List;
  */
 public class Zone {
 
-
-    public Zone getSurvolZone() {
-        return survolZone;
+    public Zone() {
     }
 
-    public void setSurvolZone(Zone survolZone) {
-        this.survolZone = survolZone;
-    }
-
-    public Iterator<Zone> exclusionZoneIterator() {
-        Iterator it = zoneArray.iterator();
-
-        return it;
-    }
-
-    public void addExclusionZone(Zone zone) {
-        this.zoneArray.add(zone);
-    }
-
-    private Zone survolZone;
-
-    private List<Zone> zoneArray = new ArrayList<Zone>();
-    List<Position> zone = new ArrayList<Position>();
+    List<Position> positions = new ArrayList<Position>();
 
     public Iterator<Position> positionIterator() {
-        Iterator it = zone.iterator();
+        Iterator it = positions.iterator();
 
         return it;
+    }
+
+    public Iterator<Position> addPosition(Position position) {
+        this.positions.add(position);
+        return positionIterator();
     }
 }
