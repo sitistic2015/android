@@ -57,7 +57,7 @@ public class GeoPosition {
             coordinatesZone += " / Longitude " + p.getLongitude();
             coordinatesZone += "/ Altitude " + p.getAltitude();
         }
-
+        
 //        for (List<Double> z : zone.getCoordinates().get(0)) {
 //            coordinatesZone = coordinatesZone + "<BR>Latitude" + z.get(0) + " / Longitude"+z.get(1);
 //        }

@@ -18,14 +18,14 @@ public class Tools {
     public static JsonDocument entityToJsonDocument(Unity u)  {
         JsonObject jsonUser = JsonObject.empty()
                 .put("type", u.getType())
-                .put("position",Tools.entityToJsonDocument(u.getUnitPosition()))
+                .put("position",Tools.positionToJsonObject(u.getUnitPosition()))
                 .put("name", u.getName());
 
         JsonDocument doc = JsonDocument.create(""+u.getId(), jsonUser);
         return doc;
     }
 
-    public static JsonObject entityToJsonDocument(Position p)
+    public static JsonObject positionToJsonObject(Position p)
     {
         JsonObject jsonUser = JsonObject.empty()
                 .put("altitude",p.getAltitude())
@@ -54,6 +54,9 @@ public class Tools {
 
     public static JsonArray zoneToJsonArray(Zone zone) {
         JsonArray array = JsonArray.create();
-        return null;
+        for(Position p : zone.getZoneList()) {
+            array.add(Tools.positionToJsonObject(p));
+        }
+        return array;
     }
 }
