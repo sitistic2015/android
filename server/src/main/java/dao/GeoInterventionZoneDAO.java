@@ -25,7 +25,7 @@ public class GeoInterventionZoneDAO extends AbstractDAO<GeoInterventionZone>{
 
         try {
             JsonObject content = jsonDocument.content();
-            if (Constant.DATATYPE_GEOINTERVENTIONZONE.equals(content.get("type"))) {
+            if (Constant.DATATYPE_GEOINTERVENTIONZONE.equals(((JsonObject) content.get("properties")).get("datatype"))) {
                 geo.setId(Long.parseLong(jsonDocument.id()));
                 geo.setCoordinates(Tools.jsonArrayToZoneList(content.getArray("coordinates")));
             } else {
@@ -44,7 +44,7 @@ public class GeoInterventionZoneDAO extends AbstractDAO<GeoInterventionZone>{
         JsonObject properties = JsonObject.create();
         properties.put("datatype", entity.getDataType());
         JsonObject jsonGeoInterventionZone = JsonObject.empty()
-                .put("type","Point")
+                .put("type","Polygon")
                 .put("coordinates", Tools.zoneListToJsonArray(entity.getCoordinates()))
                 .put("properties", properties);
         JsonDocument doc = JsonDocument.create("" + entity.getId(), jsonGeoInterventionZone);

@@ -31,7 +31,7 @@ public class UnityDAO extends AbstractDAO<Unity> {
         Unity u = new Unity();
         try {
             JsonObject content = jsonDocument.content();
-            if (Constant.DATATYPE_UNITY.equals(content.get("datatype"))) {
+            if (Constant.DATATYPE_UNITY.equals(((JsonObject)content.get("properties")).get("datatype"))) {
                 u.setId(Long.parseLong(jsonDocument.id()));
                 u.setName((String)content.get("name"));
                 u.setUnitPosition(Tools.jsonArrayToPosition((JsonArray)content.get("position")));
