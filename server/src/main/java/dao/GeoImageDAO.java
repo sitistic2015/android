@@ -21,7 +21,7 @@ public class GeoImageDAO extends AbstractDAO<GeoImage> {
     }
 
     @Override
-    public GeoImage jsonDocumentToEntity(JsonDocument jsonDocument) {
+    protected GeoImage jsonDocumentToEntity(JsonDocument jsonDocument) {
         GeoImage geoImage = new GeoImage();
 
         try {
@@ -42,7 +42,7 @@ public class GeoImageDAO extends AbstractDAO<GeoImage> {
     }
 
     @Override
-    public JsonDocument entityToJsonDocument(GeoImage entity) {
+    protected JsonDocument entityToJsonDocument(GeoImage entity) {
         JsonObject properties = JsonObject.create();
         properties.put("datatype", entity.getDataType());
         properties.put("image", entity.getImageIn64());

@@ -4,6 +4,9 @@ import com.couchbase.client.java.document.json.JsonArray;
 import entity.Position;
 import entity.Zone;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by corentin on 10/03/15.
  */
@@ -40,6 +43,22 @@ public class Tools {
         JsonArray array = JsonArray.create();
         for(Position p : zone.getPositions()) {
             array.add(Tools.positionToJsonArray(p));
+        }
+        return array;
+    }
+
+    public static List<Zone> jsonArrayToZoneList(JsonArray jsonArray) {
+        List<Zone> z = new ArrayList<Zone>();
+        for(int i=0; i<jsonArray.size();i++) {
+            z.add(Tools.jsonArrayToZone((JsonArray) jsonArray.get(i)));
+        }
+        return z;
+    }
+
+    public static JsonArray zoneListToJsonArray(List<Zone> zones) {
+        JsonArray array = JsonArray.create();
+        for(Zone zone : zones) {
+            array.add(Tools.zoneToJsonArray(zone));
         }
         return array;
     }

@@ -1,7 +1,8 @@
 package rest;
 
 
-import entity.GeoJsonDTO;
+import dao.GeoInterventionZoneDAO;
+import entity.GeoInterventionZone;
 import entity.Position;
 import entity.Zone;
 
@@ -44,9 +45,20 @@ public class GeoPosition {
     }
 
     @POST
+    @Path("setzone")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response setGeoInterventionZone(GeoInterventionZone zone) {
+        GeoInterventionZoneDAO gIZD = new GeoInterventionZoneDAO();
+        gIZD.connect();
+        GeoInterventionZone res= gIZD.create(zone);
+        gIZD.disconnect();
+        return Response.status(200).entity("Le nom de la zone est : " + zone + "<BR>" + res.toString()).build();
+    }
+
+    @POST
     @Path("zoneObject")
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response getPositionObject(GeoJsonDTO zone) {
+    public Response getPositionObject(GeoInterventionZone zone) {
         System.out.println("LA zone\t" + zone);
         String coordinatesZone = "Zone de survol";
         Zone flyoverZone = zone.getCoordinates().get(0);
@@ -57,7 +69,7 @@ public class GeoPosition {
             coordinatesZone += " / Longitude " + p.getLongitude();
             coordinatesZone += "/ Altitude " + p.getAltitude();
         }
-        
+
 
 //        for (List<Double> z : zone.getCoordinates().get(0)) {
 //            coordinatesZone = coordinatesZone + "<BR>Latitude" + z.get(0) + " / Longitude"+z.get(1);

@@ -5,6 +5,6 @@ package util;
  */
 public class Constant {
     public static final String DATATYPE_UNITY = "UNITY";
-    public static final String DATATYPE_GEOJSONDTO = "GEOJSONDTO";
+    public static final String DATATYPE_GEOINTERVENTIONZONE = "GEOINTERVENTIONZONE";
     public static final String DATATYPE_GEOIMAGE = "GEOIMAGE";
 }

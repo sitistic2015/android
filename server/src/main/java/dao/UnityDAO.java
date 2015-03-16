@@ -27,7 +27,7 @@ public class UnityDAO extends AbstractDAO<Unity> {
      * @return
      */
     @Override
-    public Unity jsonDocumentToEntity(JsonDocument jsonDocument) {
+    protected Unity jsonDocumentToEntity(JsonDocument jsonDocument) {
         Unity u = new Unity();
         try {
             JsonObject content = jsonDocument.content();
@@ -52,7 +52,7 @@ public class UnityDAO extends AbstractDAO<Unity> {
      * @return
      */
     @Override
-    public JsonDocument entityToJsonDocument(Unity u) {
+    protected JsonDocument entityToJsonDocument(Unity u) {
         JsonObject jsonUser = JsonObject.empty()
                 .put("datatype", u.getDataType())
                 .put("position", Tools.positionToJsonArray(u.getUnitPosition()))
