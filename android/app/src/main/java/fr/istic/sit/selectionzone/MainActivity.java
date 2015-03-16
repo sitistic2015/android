@@ -110,10 +110,7 @@ public class MainActivity extends MapActivity {
         final DefaultItemizedOverlay markers = initMarkers();
 
         final Overlay overlay = new Overlay() {
-
-            int countMarker = 0;
             PolygonOverlay polygonOverlay = new PolygonOverlay(initLinePaint());
-
             /**
              * handle click on map
              */
@@ -122,7 +119,6 @@ public class MainActivity extends MapActivity {
                 OverlayItem marker = new OverlayItem(p,"","");
                 markers.addItem(marker);
                 polyData.add(p);
-                countMarker++;
                 if (polyData.size()==1) {
                     polygonOverlay.setData(polyData);
                     map.getOverlays().add(polygonOverlay);
