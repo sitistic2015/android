@@ -13,7 +13,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -29,44 +31,73 @@ public class RequesterService extends Service {
     public static final int MSG_POINT = 2;
     public static final int MSG_IMG = 3;
     public static final int MSG_AGENTS = 4;
+    public static final int MSG_DRONES = 5;
+    public static final int MSG_DRONE = 6;
 
-    @Override
-    public void onCreate() {
 
-    }
+    private static final String URL = "http://37.59.58.42:8080/sitserver/rest/";
+
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     @Override
     public IBinder onBind(Intent intent) {
         return mMessenger.getBinder();
     }
 
+    private String formatZone(Coordinates coordinates) {
+        String stringCoordinates = "{\"type\": \"Polygon\", \"coordinates\":[[";
+        for(int i = 0; i < coordinates.getCoordinates().size() - 1; i++) {
+            stringCoordinates += "[" + coordinates.getCoordinates().get(i).first + ", " + coordinates.getCoordinates().get(i).second + "],";
+        }
+        stringCoordinates += "[" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", " + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "]";
+        stringCoordinates += "]]}";
+        System.out.println(stringCoordinates);
+        return stringCoordinates;
+    }
+
     class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             Coordinates coordinates;
+            HttpUriRequest request;
             switch (msg.what) {
                 case MSG_POINT:
                     //send point to the server
                     coordinates = msg.getData().getParcelable("coord");
-                    new RequestTask(MSG_POINT, coordinates, msg.replyTo).execute();
+                    request = new HttpGet("geoposition/point/" + coordinates.getCoordinates().get(0).first + "/" + coordinates.getCoordinates().get(0).second);
                     break;
                 case MSG_ZONE:
                     //send zone to the server
                     coordinates = msg.getData().getParcelable("coord");
-                    new RequestTask(MSG_ZONE, coordinates, msg.replyTo).execute();
+                    request = new HttpPost(URL + "geoposition/zoneObject");
+                    try {
+                        ((HttpPost)request).setEntity(new ByteArrayEntity(formatZone(coordinates).getBytes("UTF-8")));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case MSG_IMG:
                     //ask server for images
-                    new RequestTask(MSG_IMG, msg.replyTo).execute();
+                    request = new HttpGet("images");
                     break;
                 case MSG_AGENTS:
                     //ask server for agents
-                    new RequestTask(MSG_AGENTS, msg.replyTo).execute();
+                    request = new HttpGet("agents");
+                    break;
+                case MSG_DRONES:
+                    //ask server for the list of drones
+                    request = new HttpGet("drones");
+                    break;
+                case MSG_DRONE:
+                    //ask server for one special drone
+                    int drone = (Integer)msg.obj;
+                    request = new HttpGet("drone/" + drone);
+                    break;
                 default:
                     super.handleMessage(msg);
+                    return;
             }
+            new RequestTask(request, msg.what, msg.replyTo).execute();
         }
     }
-
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
 }

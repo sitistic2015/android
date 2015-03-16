@@ -7,12 +7,15 @@ import android.os.RemoteException;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.ParseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -25,82 +28,29 @@ import java.io.UnsupportedEncodingException;
  */
 class RequestTask extends AsyncTask<String, String, String> {
 
-    private static final String URL = "http://5.135.185.191:8080/georestservice/rest/";
-
-    private Coordinates coordinates;
-    private final int request;
+    private final HttpUriRequest request;
     private final Messenger replyTo;
+    private final int message;
 
-    public RequestTask(int request, Coordinates coordinates, Messenger replyTo) {
-        this.coordinates = coordinates;
-        this.request = request;
-        this.replyTo = replyTo;
-    }
-
-    public RequestTask(int request, Messenger replyTo) {
+    public RequestTask(HttpUriRequest request, int message, Messenger replyTo) {
+        this.message = message;
         this.request = request;
         this.replyTo = replyTo;
     }
 
     @Override
     protected String doInBackground(String... uri) {
-        switch(request) {
-            case RequesterService.MSG_ZONE:
-                try {
-                    return postZone("geoposition/zoneObject", coordinates);
-                } catch (IOException e) {
-                    return e.getMessage();
-                }
-            case RequesterService.MSG_POINT:
-                try {
-                    return postPoint("geoposition/point/" + coordinates.getCoordinates().get(0).first + "/" + coordinates.getCoordinates().get(0).second);
-                } catch (IOException e) {
-                    return e.getMessage();
-                }
-            case RequesterService.MSG_IMG:
-                //TODO put the right address
-                try {
-                    return post(new HttpPost("ouestcequontrouvelesimages"));
-                } catch (IOException e) {
-                    return e.getMessage();
-                }
-            case RequesterService.MSG_AGENTS:
-                try {
-                    return post(new HttpPost("ouestcequontrouvelesagents"));
-                } catch (IOException e) {
-                    return e.getMessage();
-            }
-            default:return null;
-        }
-    }
-
-    private String formatZone(Coordinates coordinates) {
-        String stringCoordinates = "{\"type\": \"Polygon\", \"coordinates\":[[";
-        for(int i = 0; i < coordinates.getCoordinates().size() - 1; i++) {
-            stringCoordinates += "[" + coordinates.getCoordinates().get(i).first + ", " + coordinates.getCoordinates().get(i).second + "],";
-        }
-        stringCoordinates += "[" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", " + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "]";
-        stringCoordinates += "]]}";
-        System.out.println(stringCoordinates);
-        return stringCoordinates;
-    }
-
-    private String postZone(String args, Coordinates coordinates) throws IOException {
-        HttpPost request = new HttpPost(URL + args);
+        String response;
         try {
-            request.setEntity(new ByteArrayEntity(
-                            formatZone(coordinates).getBytes("UTF-8")));
-        } catch (UnsupportedEncodingException e) {
+            response = request();
+        } catch (IOException e) {
             e.printStackTrace();
+            response = e.getMessage();
         }
-        return post(request);
+        return response;
     }
 
-    private String postPoint(String args) throws IOException {
-        HttpPost request = new HttpPost(URL + args);
-        return post(request);
-    }
-    private String post(HttpPost request) throws IOException {
+    private String request() throws IOException {
         request.setHeader(new Header() {
             @Override
             public String getName() {
@@ -137,7 +87,7 @@ class RequestTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
 
-        Message _msg = Message.obtain(null, request, result);
+        Message _msg = Message.obtain(null, message, result);
         try {
             replyTo.send(_msg);
         } catch (RemoteException e) {

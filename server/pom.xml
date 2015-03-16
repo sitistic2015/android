@@ -40,17 +40,39 @@
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
-            <version>1.18.1</version>
+            <artifactId>jersey-server</artifactId>
+            <version>1.18.3</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.8</version>
+            <version>1.18.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>1.18.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+            <version>1.18.3</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>sitserver</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <path>/</path>
+                    <contextFile>src/main/webapp/META-INF/context.xml</contextFile>
+                    <!--<staticContextPath>${webappDirectory}</staticContextPath>-->
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
