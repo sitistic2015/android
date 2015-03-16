@@ -55,7 +55,7 @@ public class UnityDAO extends AbstractDAO<Unity> {
     public JsonDocument entityToJsonDocument(Unity u) {
         JsonObject jsonUser = JsonObject.empty()
                 .put("type", u.getType())
-                .put("position", Tools.entityToJsonDocument(u.getUnitPosition()))
+                .put("position", Tools.positionToJsonObject(u.getUnitPosition()))
                 .put("name", u.getName());
         JsonDocument doc = JsonDocument.create(""+u.getId(), jsonUser);
         return doc;

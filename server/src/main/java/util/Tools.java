@@ -54,7 +54,7 @@ public class Tools {
 
     public static JsonArray zoneToJsonArray(Zone zone) {
         JsonArray array = JsonArray.create();
-        for(Position p : zone.getZoneList()) {
+        for(Position p : zone.getPositions()) {
             array.add(Tools.positionToJsonObject(p));
         }
         return array;
