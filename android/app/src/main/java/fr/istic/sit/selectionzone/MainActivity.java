@@ -149,11 +149,6 @@ public class MainActivity extends MapActivity {
         List<Pair<Double,Double>> coords = new ArrayList();
         polyData.add(polyData.get(0));
 
-
-        for (Overlay overlay : map.getOverlays()){
-            System.out.println(overlay);
-        }
-
         for (GeoPoint point : polyData) {
             coords.add(new Pair<Double, Double>(point.getLatitude(), point.getLongitude()));
         }
