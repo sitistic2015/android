@@ -28,7 +28,6 @@ import java.io.UnsupportedEncodingException;
  */
 class RequestTask extends AsyncTask<String, String, String> {
 
-
     private final HttpUriRequest request;
     private final Messenger replyTo;
     private final int message;
