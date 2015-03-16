@@ -28,9 +28,9 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
     protected Bucket currentBucket;
 
     /**
-     * Type of T
+     * datatype of T
      */
-    protected String type;
+    protected String datatype;
 
     /**
      * Connect to BDD and

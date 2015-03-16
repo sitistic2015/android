@@ -16,7 +16,7 @@ public class GeoJsonDTODAO extends AbstractDAO<GeoJsonDTO>{
      */
     public GeoJsonDTODAO()
     {
-        this.type = Constant.TYPE_GEOJSONDTO;
+        this.datatype = Constant.DATATYPE_GEOJSONDTO;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class GeoJsonDTODAO extends AbstractDAO<GeoJsonDTO>{
 
         try {
             JsonObject content = jsonDocument.content();
-            if (Constant.TYPE_GEOJSONDTO.equals(content.get("type"))) {
+            if (Constant.DATATYPE_GEOJSONDTO.equals(content.get("type"))) {
                 geo.setId(Long.parseLong(jsonDocument.id()));
                 geo.addZone(Tools.jsonArrayToZone(content.getArray("zone")));
             } else {
@@ -42,7 +42,7 @@ public class GeoJsonDTODAO extends AbstractDAO<GeoJsonDTO>{
     @Override
     public JsonDocument entityToJsonDocument(GeoJsonDTO entity) {
         JsonObject jsonUser = JsonObject.empty()
-                .put("type", entity.getType())
+                .put("datatype", entity.getDataType())
                 .put("zone", Tools.zoneToJsonArray(entity.getCoordinates().get(0)));
         JsonDocument doc = JsonDocument.create(""+entity.getId(), jsonUser);
         return doc;

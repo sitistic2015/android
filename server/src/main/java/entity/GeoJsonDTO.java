@@ -17,7 +17,7 @@ public class GeoJsonDTO extends AbstractEntity implements Serializable {
 
     public GeoJsonDTO() {
         super();
-        this.type = Constant.TYPE_GEOJSONDTO;
+        this.datatype = Constant.DATATYPE_GEOJSONDTO;
     }
 
     public List<Zone> getCoordinates() {

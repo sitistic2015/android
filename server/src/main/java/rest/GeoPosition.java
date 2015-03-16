@@ -47,7 +47,7 @@ public class GeoPosition {
     @Path("zoneObject")
     @Consumes({MediaType.APPLICATION_JSON})
     public Response getPositionObject(GeoJsonDTO zone) {
-        System.out.println("LA zone\t" + zone.getType());
+        System.out.println("LA zone\t" + zone);
         String coordinatesZone = "Zone de survol";
         Zone flyoverZone = zone.getCoordinates().get(0);
         Iterator<Position> it = flyoverZone.positionIterator();

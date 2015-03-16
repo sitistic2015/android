@@ -10,14 +10,14 @@ import java.util.List;
  */
 public class Zone {
 
+    List<Position> positions = new ArrayList<Position>();
+
     public Zone() {
     }
 
     public List<Position> getPositions() {
         return positions;
     }
-
-    List<Position> positions = new ArrayList<Position>();
 
     public Iterator<Position> positionIterator() {
         Iterator it = positions.iterator();
