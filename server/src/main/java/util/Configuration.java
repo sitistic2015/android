@@ -6,8 +6,8 @@ import java.util.Map;
  * Created by alban on 12/03/15.
  */
 public class Configuration {
-    public static String BUCKET_NAME;
-    public static String COUCHBASE_HOSTNAME;
+    public static String BUCKET_NAME = "prod";
+    public static String COUCHBASE_HOSTNAME = "37.59.58.42";
 
     /**
      * Load configurations
