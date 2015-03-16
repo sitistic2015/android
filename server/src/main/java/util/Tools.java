@@ -31,7 +31,6 @@ public class Tools {
         Zone z = new Zone();
         for(int i=0; i<jsonArray.size();i++) {
             z.addPosition(Tools.jsonArrayToPosition((JsonArray) jsonArray.get(i)));
-
         }
         return z;
     }
