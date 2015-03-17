@@ -1,53 +1,39 @@
 package util;
 
-import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.json.JsonArray;
-import com.couchbase.client.java.document.json.JsonObject;
-import entity.AbstractEntity;
 import entity.Position;
-import entity.Unity;
 import entity.Zone;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by corentin on 10/03/15.
  */
 public class Tools {
-    public static JsonDocument entityToJsonDocument(AbstractEntity e) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException();
-    }
-    public static JsonDocument entityToJsonDocument(Unity u)  {
-        JsonObject jsonUser = JsonObject.empty()
-                .put("type", u.getType())
-                .put("position",Tools.positionToJsonObject(u.getUnitPosition()))
-                .put("name", u.getName());
 
-        JsonDocument doc = JsonDocument.create(""+u.getId(), jsonUser);
-        return doc;
-    }
-
-    public static JsonObject positionToJsonObject(Position p)
+    public static JsonArray positionToJsonArray(Position p)
     {
-        JsonObject jsonUser = JsonObject.empty()
-                .put("altitude",p.getAltitude())
-                .put("latitude",p.getLatitude())
-                .put("longitude",p.getLongitude());
-        return jsonUser;
+        JsonArray jsonArray = JsonArray.create();
+        jsonArray.add(p.getLatitude());
+        jsonArray.add(p.getLongitude());
+        jsonArray.add(p.getAltitude());
+        return jsonArray;
     }
 
-    public static Position jsonObjectToPosition(JsonObject jsonObject)
+    public static Position jsonArrayToPosition(JsonArray jsonArray)
     {
         Position p = new Position();
-        p.setAltitude((Double)jsonObject.get("altitude"));
-        p.setLatitude((Double)jsonObject.get("latitude"));
-        p.setLongitude((Double)jsonObject.get("longitude"));
+        p.setLatitude((Double) jsonArray.get(0));
+        p.setLongitude((Double)jsonArray.get(1));
+        p.setAltitude((Double)jsonArray.get(2));
         return p;
     }
 
     public static Zone jsonArrayToZone(JsonArray jsonArray) {
         Zone z = new Zone();
         for(int i=0; i<jsonArray.size();i++) {
-            z.addPosition(Tools.jsonObjectToPosition((JsonObject)jsonArray.get(i)));
-
+            z.addPosition(Tools.jsonArrayToPosition((JsonArray) jsonArray.get(i)));
         }
         return z;
     }
@@ -55,7 +41,23 @@ public class Tools {
     public static JsonArray zoneToJsonArray(Zone zone) {
         JsonArray array = JsonArray.create();
         for(Position p : zone.getPositions()) {
-            array.add(Tools.positionToJsonObject(p));
+            array.add(Tools.positionToJsonArray(p));
+        }
+        return array;
+    }
+
+    public static List<Zone> jsonArrayToZoneList(JsonArray jsonArray) {
+        List<Zone> z = new ArrayList<Zone>();
+        for(int i=0; i<jsonArray.size();i++) {
+            z.add(Tools.jsonArrayToZone((JsonArray) jsonArray.get(i)));
+        }
+        return z;
+    }
+
+    public static JsonArray zoneListToJsonArray(List<Zone> zones) {
+        JsonArray array = JsonArray.create();
+        for(Zone zone : zones) {
+            array.add(Tools.zoneToJsonArray(zone));
         }
         return array;
     }

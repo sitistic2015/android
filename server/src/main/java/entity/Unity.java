@@ -16,7 +16,7 @@ public class Unity extends AbstractEntity{
     public Unity()
     {
         super();
-        this.type = Constant.TYPE_UNITY;
+        this.datatype = Constant.DATATYPE_UNITY;
     }
     /**
      * Unity position getter     *
@@ -34,15 +34,10 @@ public class Unity extends AbstractEntity{
         this.unitPosition = unitPosition;
     }
 
-    public void setName(String newName)
-    {
-        this.name = newName;
-    }
-
     @Override
     public String toString() {
         return "Unity{"  +
-                "type='" + type + "\'" +
+                "datatype='" + datatype + "\'" +
                 ", unitPosition=" + unitPosition +
                 ", name='" + name + '\'' +
                 '}';
@@ -57,7 +52,7 @@ public class Unity extends AbstractEntity{
 
         if (name != null ? !name.equals(unity.name) : unity.name != null) return false;
         if (unitPosition != null ? !unitPosition.equals(unity.unitPosition) : unity.unitPosition != null) return false;
-        if (type != null ? !type.equals(unity.type) : unity.type != null) return false;
+        if (datatype != null ? !datatype.equals(unity.datatype) : unity.datatype != null) return false;
         return true;
     }
 
@@ -71,5 +66,10 @@ public class Unity extends AbstractEntity{
     public String getName()
     {
         return name;
+    }
+
+    public void setName(String newName)
+    {
+        this.name = newName;
     }
 }

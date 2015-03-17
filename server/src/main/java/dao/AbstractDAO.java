@@ -28,15 +28,15 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
     protected Bucket currentBucket;
 
     /**
-     * Type of T
+     * datatype of T
      */
-    protected String type;
+    protected String datatype;
 
     /**
      * Connect to BDD and
      * @return Bucket to communicate with couchbase
      */
-    protected final void connect() {
+    public final void connect() {
         if(currentCluster == null || currentBucket==null) {
             // Connect to a cluster
             currentCluster = CouchbaseCluster.create(Configuration.COUCHBASE_HOSTNAME);
@@ -49,7 +49,7 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
     /**
      * Disconnect BDD
      */
-    protected final void disconnect() {
+    public final void disconnect() {
         if(currentCluster != null)
         {
             currentCluster.disconnect();
@@ -129,12 +129,12 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
      * @param jsonDocument document to transform
      * @return entity of JsonDocument
      */
-    public abstract T jsonDocumentToEntity(JsonDocument jsonDocument);
+    protected abstract T jsonDocumentToEntity(JsonDocument jsonDocument);
 
     /**
      * Transform an entity to JsonDocument
      * @param entity to transform
      * @return jsonDoc of entity
      */
-    public abstract JsonDocument entityToJsonDocument(T entity);
+    protected abstract JsonDocument entityToJsonDocument(T entity);
 }
