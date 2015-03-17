@@ -99,6 +99,5 @@ public class AbstractDAOUnityTest {
         // suppression
         dao.delete(unity);
         assertNull(dao.getById(idInbase));
-        assertNull(dao.getById(idInbase));
     }
 }

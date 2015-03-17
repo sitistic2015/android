@@ -9,6 +9,15 @@ import util.Constant;
  */
 public class GeoImage extends AbstractEntity {
     private Position coordinates;
+
+    @Override
+    public String toString() {
+        return "GeoImage{" +
+                "coordinates=" + coordinates +
+                ", imageIn64='" + imageIn64 + '\'' +
+                '}';
+    }
+
     private String imageIn64;
 
     /**
