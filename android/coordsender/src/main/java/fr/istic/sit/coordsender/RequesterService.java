@@ -45,12 +45,12 @@ public class RequesterService extends Service {
     }
 
     private String formatZone(Coordinates coordinates) {
-        String stringCoordinates = "{\"type\": \"Polygon\", \"coordinates\":[[";
+        String stringCoordinates = "{ \"coordinates\":[";
         for(int i = 0; i < coordinates.getCoordinates().size() - 1; i++) {
-            stringCoordinates += "[ latitude:" + coordinates.getCoordinates().get(i).first + ", longitude:" + coordinates.getCoordinates().get(i).second + "],";
+            stringCoordinates += "{ \"latitude\":" + coordinates.getCoordinates().get(i).first + ", \"longitude\":" + coordinates.getCoordinates().get(i).second + "},";
         }
-        stringCoordinates += "[ latitude:" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", longitude:" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "]";
-        stringCoordinates += "]]}";
+        stringCoordinates += "{ \"latitude\":" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", \"longitude\":" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "}";
+        stringCoordinates += "}]}";
         System.out.println(stringCoordinates);
         return stringCoordinates;
     }
