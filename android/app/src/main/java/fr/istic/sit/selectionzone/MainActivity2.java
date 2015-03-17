@@ -20,11 +20,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,7 +35,8 @@ public class MainActivity2 extends Activity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
-    Messenger mService = null;
+    public Messenger mService = null;
+    public Fragment fragment = null;
 
 	// nav drawer title
 	private CharSequence mDrawerTitle;
@@ -175,7 +174,6 @@ public class MainActivity2 extends Activity {
 	 * */
 	private void displayView(int position) {
 		// update the main content by replacing fragments
-		Fragment fragment = null;
 		switch (position) {
 		case 0:
 			fragment = new HomeFragment();
@@ -244,7 +242,7 @@ public class MainActivity2 extends Activity {
 
 
 
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    public final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     /**
      * Class for interacting with the main interface of the service.
@@ -260,8 +258,10 @@ public class MainActivity2 extends Activity {
             // service through an IDL interface, so get a client-side
             // representation of that from the raw service object.
             mService = new Messenger(service);
-            addEventText("Attached.");
+            if (fragment instanceof HomeFragment) {
 
+               // ((HomeFragment) fragment).addEventText("Attached.");
+            }
             // As part of the sample, tell the user what happened.
             Toast.makeText(MainActivity2.this, "Service connected",
                     Toast.LENGTH_SHORT).show();
@@ -271,8 +271,9 @@ public class MainActivity2 extends Activity {
             // This is called when the connection with the service has been
             // unexpectedly disconnected -- that is, its process crashed.
             mService = null;
-            addEventText("Disconnected.");
-
+            if (fragment instanceof HomeFragment) {
+               // ((HomeFragment) fragment).addEventText("Disconnected.");
+            }
             // As part of the sample, tell the user what happened.
             Toast.makeText(MainActivity2.this, "Service disconnected",
                     Toast.LENGTH_SHORT).show();
@@ -302,7 +303,10 @@ public class MainActivity2 extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case RequesterService.MSG_ZONE:
-                    addEventText("Received from service: " + msg.obj);
+                    if (fragment instanceof HomeFragment) {
+
+               //         ((HomeFragment) fragment).addEventText("Received from service: " + msg.obj);
+                    }
                     break;
                 default:
                     super.handleMessage(msg);
@@ -317,8 +321,11 @@ public class MainActivity2 extends Activity {
         bindService(new Intent(MainActivity2.this,
                 RequesterService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
-        addEventText("Binding.");
-    }
+       // if (fragment instanceof HomeFragment) {
+
+         //   ((HomeFragment) fragment).addEventText("Binding.");
+//        }
+}
 
     void doUnbindService() {
         if (mIsBound) {
@@ -339,25 +346,23 @@ public class MainActivity2 extends Activity {
             // Detach our existing connection.
             unbindService(mConnection);
             mIsBound = false;
-            addEventText("Unbinding.");
+            if (fragment instanceof HomeFragment) {
+
+       //         ((HomeFragment) fragment).addEventText("Unbinding.");
+        }
         }
     }
-    private void addEventText(String text){
-        TextView tv = new TextView(MainActivity2.this);
-        tv.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        tv.setText(text);
-        actions.addView(tv);
-        scroller.fullScroll(ScrollView.FOCUS_DOWN);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                scroller.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        },50);
 
+
+    public void hideSoftKeyboard(View v){
+        //hides soft keyboard
+        final InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
+
+
+
 
 }

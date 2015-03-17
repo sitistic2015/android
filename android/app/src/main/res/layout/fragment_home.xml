@@ -19,7 +19,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Valider"
-        android:onClick="validateCoords"
+
         android:id="@+id/buttonValidate2"
         android:layout_below="@+id/scroller2"
         android:layout_alignParentLeft="true"
