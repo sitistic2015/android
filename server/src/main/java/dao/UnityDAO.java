@@ -53,10 +53,15 @@ public class UnityDAO extends AbstractDAO<Unity> {
      */
     @Override
     protected JsonDocument entityToJsonDocument(Unity u) {
+
+        JsonObject properties = JsonObject.create();
+        properties.put("datatype", u.getDataType());
+
         JsonObject jsonUser = JsonObject.empty()
                 .put("datatype", u.getDataType())
                 .put("position", Tools.positionToJsonArray(u.getUnitPosition()))
-                .put("name", u.getName());
+                .put("name", u.getName())
+                .put("properties", properties);
         JsonDocument doc = JsonDocument.create(""+u.getId(), jsonUser);
         System.out.println(jsonUser);
         return doc;
