@@ -11,4 +11,4 @@ android/build/
 android/*.iml
 
 vagrant/.vagrant
-
+vagrant/.fuse*
