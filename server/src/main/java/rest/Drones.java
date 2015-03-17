@@ -1,7 +1,9 @@
 package rest;
 
 
+import dao.GeoDroneDAO;
 import dao.GeoInterventionZoneDAO;
+import entity.GeoDrone;
 import entity.GeoInterventionZone;
 
 import javax.ws.rs.*;
@@ -29,21 +31,21 @@ public class Drones {
     public Response initializeDrone(GeoDrone drone) {
         GeoDroneDAO gDD = new GeoDroneDAO();
         gDD.connect();
-        GeoDroneDAO res= gDD.create(drone);
-        gIZD.disconnect();
-        return Response.status(200).entity("Le drone est initialisé").build();
+        GeoDrone res = gDD.create(drone);
+        gDD.disconnect();
+        return Response.status(200).entity("Le drone "+ res.getId() + " est initialisé à la position : "+ res.getCoordinates().getLatitude() +"/"+res.getCoordinates().getLongitude() ).build();
 
     }
 
     @GET
     @Path("{id}")
     //  @Consumes({ MediaType.APPLICATION_JSON })
-    public Response getDroneById(@PathParam("id") int id) {
+    public GeoDrone getDroneById(@PathParam("id") int id) {
         GeoDroneDAO gDD = new GeoDroneDAO();
         gDD.connect();
-        GeoDroneDAO res= gDD.create(drone);
-        gIZD.disconnect();
-        return Response.status(200).entity("Le drone id est : " + id).build();
+        GeoDrone res= gDD.getById(id);
+        gDD.disconnect();
+        return res;
 
     }
 
