@@ -45,12 +45,12 @@ public class RequesterService extends Service {
     }
 
     private String formatZone(Coordinates coordinates) {
-        String stringCoordinates = "{ \"coordinates\":[";
+        String stringCoordinates = "{\"coordinates\":[{\"positions\" : [";
         for(int i = 0; i < coordinates.getCoordinates().size() - 1; i++) {
-            stringCoordinates += "{ \"latitude\":" + coordinates.getCoordinates().get(i).first + ", \"longitude\":" + coordinates.getCoordinates().get(i).second + "},";
+            stringCoordinates += "{\"latitude\":" + coordinates.getCoordinates().get(i).first + ",\"longitude\":" + coordinates.getCoordinates().get(i).second + "},";
         }
-        stringCoordinates += "{ \"latitude\":" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ", \"longitude\":" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "}";
-        stringCoordinates += "}]}";
+        stringCoordinates += "{\"latitude\":" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).first + ",\"longitude\":" + coordinates.getCoordinates().get(coordinates.getCoordinates().size() - 1).second + "}";
+        stringCoordinates += "]}]}";
         System.out.println(stringCoordinates);
         return stringCoordinates;
     }
@@ -69,7 +69,7 @@ public class RequesterService extends Service {
                 case MSG_ZONE:
                     //send zone to the server
                     coordinates = msg.getData().getParcelable("coord");
-                    request = new HttpPost(URL + "geoposition/zoneObject");
+                    request = new HttpPost(URL + "geoposition/setzone");
                     try {
                         ((HttpPost)request).setEntity(new ByteArrayEntity(formatZone(coordinates).getBytes("UTF-8")));
                     } catch (UnsupportedEncodingException e) {

@@ -159,34 +159,36 @@ public class MainActivity extends MapActivity {
     }
 
     public void validateCoords(View view){
-        List<Pair<Double,Double>> coords = new ArrayList();
-        polyData.add(polyData.get(0));
+        if (polyData.isEmpty()){
+            addEventText("There is no point to send");
+        }else{
+            List<Pair<Double,Double>> coords = new ArrayList();
+            polyData.add(polyData.get(0));
 
-        for (GeoPoint point : polyData) {
-            coords.add(new Pair<Double, Double>(point.getLatitude(), point.getLongitude()));
+            for (GeoPoint point : polyData) {
+                coords.add(new Pair<Double, Double>(point.getLatitude(), point.getLongitude()));
+            }
+
+            Coordinates coordinates = new Coordinates(coords);
+
+            try {
+                Message msg = Message.obtain(null,
+                        RequesterService.MSG_ZONE);
+                msg.replyTo = mMessenger;
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("coord",coordinates);
+                msg.setData(bundle);
+                mService.send(msg);
+                addEventText(polyData.size()+" points sent to the service ;)");
+
+            } catch (RemoteException e) {
+                // In this case the service has crashed before we could even
+                // do anything with it; we can count on soon being
+                // disconnected (and then reconnected if it can be restarted)
+                // so there is no need to do anything here.
+            }
         }
 
-        for (Pair<Double, Double> coord : coords){
-            addEventText("Point : "+coord.first+","+coord.second);
-        }
-
-
-        Coordinates coordinates = new Coordinates(coords);
-
-        try {
-            Message msg = Message.obtain(null,
-                    RequesterService.MSG_ZONE);
-            msg.replyTo = mMessenger;
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("coord",coordinates);
-            msg.setData(bundle);
-            mService.send(msg);
-        } catch (RemoteException e) {
-            // In this case the service has crashed before we could even
-            // do anything with it; we can count on soon being
-            // disconnected (and then reconnected if it can be restarted)
-            // so there is no need to do anything here.
-        }
     }
 
     private void addEventText(String text){
