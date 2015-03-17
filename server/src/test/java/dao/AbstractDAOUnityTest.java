@@ -41,6 +41,14 @@ public class AbstractDAOUnityTest {
 
     }
 
+    @Test
+    public void test()
+    {
+        Unity unity = new Unity();
+        unity.setUnitPosition(new Position(4.0, 9.0, 19.0));
+        unity.setName("Françis");
+        dao.entityToJsonDocument(unity);
+    }
 
     @Test
     public void testInsert() {
@@ -90,7 +98,6 @@ public class AbstractDAOUnityTest {
 
         // suppression
         dao.delete(unity);
-        assertNull(dao.getById(idInbase));
         assertNull(dao.getById(idInbase));
     }
 }

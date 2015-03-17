@@ -3,20 +3,33 @@ package fr.istic.sit.selectionzone;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import fr.istic.sit.coordsender.RequesterService;
 import fr.istic.sit.selectionzone.adapter.NavDrawerListAdapter;
 import fr.istic.sit.selectionzone.model.NavDrawerItem;
 
@@ -24,10 +37,11 @@ public class MainActivity2 extends Activity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
+    Messenger mService = null;
 
 	// nav drawer title
 	private CharSequence mDrawerTitle;
-
+    boolean mIsBound;
 	// used to store app title
 	private CharSequence mTitle;
 
@@ -165,6 +179,8 @@ public class MainActivity2 extends Activity {
 		switch (position) {
 		case 0:
 			fragment = new HomeFragment();
+          //  MainActivity d = new MainActivity();
+            //fragment.onAttach(d);
 			break;
 		case 1:
 			fragment = new FindPeopleFragment();
@@ -190,7 +206,6 @@ public class MainActivity2 extends Activity {
 			FragmentManager fragmentManager = getFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.frame_container, fragment).commit();
-
 			// update selected item and title, then close the drawer
 			mDrawerList.setItemChecked(position, true);
 			mDrawerList.setSelection(position);
@@ -226,5 +241,123 @@ public class MainActivity2 extends Activity {
 		// Pass any configuration change to the drawer toggls
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
+
+
+
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
+
+    /**
+     * Class for interacting with the main interface of the service.
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+
+
+            // This is called when the connection with the service has been
+            // established, giving us the service object we can use to
+            // interact with the service.  We are communicating with our
+            // service through an IDL interface, so get a client-side
+            // representation of that from the raw service object.
+            mService = new Messenger(service);
+            addEventText("Attached.");
+
+            // As part of the sample, tell the user what happened.
+            Toast.makeText(MainActivity2.this, "Service connected",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            mService = null;
+            addEventText("Disconnected.");
+
+            // As part of the sample, tell the user what happened.
+            Toast.makeText(MainActivity2.this, "Service disconnected",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        doBindService();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        doUnbindService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        doUnbindService();
+    }
+
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case RequesterService.MSG_ZONE:
+                    addEventText("Received from service: " + msg.obj);
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+    void doBindService() {
+        // Establish a connection with the service.  We use an explicit
+        // class name because there is no reason to be able to let other
+        // applications replace our component.
+        bindService(new Intent(MainActivity2.this,
+                RequesterService.class), mConnection, Context.BIND_AUTO_CREATE);
+        mIsBound = true;
+        addEventText("Binding.");
+    }
+
+    void doUnbindService() {
+        if (mIsBound) {
+            // If we have received the service, and hence registered with
+            // it, then now is the time to unregister.
+            //if (mService != null) {
+            //    try {
+            //        Message msg = Message.obtain(null,
+            //                RequesterService.MSG_ZONE);
+            //        msg.replyTo = mMessenger;
+            //        mService.send(msg);
+            //    } catch (RemoteException e) {
+            //        // There is nothing special we need to do if the service
+            //        // has crashed.
+            //    }
+            //}
+
+            // Detach our existing connection.
+            unbindService(mConnection);
+            mIsBound = false;
+            addEventText("Unbinding.");
+        }
+    }
+    private void addEventText(String text){
+        TextView tv = new TextView(MainActivity2.this);
+        tv.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        tv.setText(text);
+        actions.addView(tv);
+        scroller.fullScroll(ScrollView.FOCUS_DOWN);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scroller.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        },50);
+
+    }
 
 }

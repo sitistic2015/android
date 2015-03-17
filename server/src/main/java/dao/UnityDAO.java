@@ -1,6 +1,7 @@
 package dao;
 
 import com.couchbase.client.java.document.JsonDocument;
+import com.couchbase.client.java.document.json.JsonArray;
 import com.couchbase.client.java.document.json.JsonObject;
 import entity.Unity;
 import util.Constant;
@@ -17,7 +18,7 @@ public class UnityDAO extends AbstractDAO<Unity> {
      */
     public UnityDAO()
     {
-        this.type = Constant.TYPE_UNITY;
+        this.datatype = Constant.DATATYPE_UNITY;
     }
 
     /**
@@ -26,15 +27,14 @@ public class UnityDAO extends AbstractDAO<Unity> {
      * @return
      */
     @Override
-    public Unity jsonDocumentToEntity(JsonDocument jsonDocument) {
+    protected Unity jsonDocumentToEntity(JsonDocument jsonDocument) {
         Unity u = new Unity();
-
         try {
             JsonObject content = jsonDocument.content();
-            if (Constant.TYPE_UNITY.equals(content.get("type"))) {
+            if (Constant.DATATYPE_UNITY.equals(((JsonObject)content.get("properties")).get("datatype"))) {
                 u.setId(Long.parseLong(jsonDocument.id()));
                 u.setName((String)content.get("name"));
-                u.setUnitPosition(Tools.jsonObjectToPosition((JsonObject)content.get("position")));
+                u.setUnitPosition(Tools.jsonArrayToPosition((JsonArray)content.get("position")));
             } else {
                 throw new IllegalArgumentException();
             }
@@ -52,12 +52,18 @@ public class UnityDAO extends AbstractDAO<Unity> {
      * @return
      */
     @Override
-    public JsonDocument entityToJsonDocument(Unity u) {
+    protected JsonDocument entityToJsonDocument(Unity u) {
+
+        JsonObject properties = JsonObject.create();
+        properties.put("datatype", u.getDataType());
+
         JsonObject jsonUser = JsonObject.empty()
-                .put("type", u.getType())
-                .put("position", Tools.positionToJsonObject(u.getUnitPosition()))
-                .put("name", u.getName());
+                .put("datatype", u.getDataType())
+                .put("position", Tools.positionToJsonArray(u.getUnitPosition()))
+                .put("name", u.getName())
+                .put("properties", properties);
         JsonDocument doc = JsonDocument.create(""+u.getId(), jsonUser);
+        System.out.println(jsonUser);
         return doc;
     }
 

@@ -101,6 +101,19 @@ public class MainActivity extends MapActivity {
     }
 
     /**
+     * Put drone on the map at a specified location
+     * @param latitude
+     * @param longitude
+     * @param info
+     */
+    private void displayDrone(double latitude, double longitude, String info) {
+        final DefaultItemizedOverlay drones = new DefaultItemizedOverlay(getResources().getDrawable(R.drawable.ic_drone));
+        OverlayItem drone = new OverlayItem(new GeoPoint(latitude, longitude), "Drone", info);
+        drones.addItem(drone);
+        map.getOverlays().add(drones);
+    }
+
+    /**
      * handle click on map
      * put marker where it is clicked
      * draw polyline when more than one marker

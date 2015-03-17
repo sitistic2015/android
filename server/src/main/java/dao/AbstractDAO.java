@@ -5,10 +5,12 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.error.FlushDisabledException;
+import com.couchbase.client.java.view.*;
 import entity.AbstractEntity;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import util.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,15 +30,15 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
     protected Bucket currentBucket;
 
     /**
-     * Type of T
+     * datatype of T
      */
-    protected String type;
+    protected String datatype;
 
     /**
      * Connect to BDD and
      * @return Bucket to communicate with couchbase
      */
-    protected final void connect() {
+    public final void connect() {
         if(currentCluster == null || currentBucket==null) {
             // Connect to a cluster
             currentCluster = CouchbaseCluster.create(Configuration.COUCHBASE_HOSTNAME);
@@ -49,7 +51,7 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
     /**
      * Disconnect BDD
      */
-    protected final void disconnect() {
+    public final void disconnect() {
         if(currentCluster != null)
         {
             currentCluster.disconnect();
@@ -90,7 +92,16 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
      */
     public final List<T> getAll()
     {
-        throw new NotImplementedException();
+        List<T> res = new ArrayList<T>();
+        DesignDocument designDoc = currentBucket.bucketManager().getDesignDocument("designDoc");
+        createViewAll();
+        ViewResult result = currentBucket.query(ViewQuery.from("designDoc", "by_datatype_" + datatype));
+                // Iterate through the returned ViewRows
+        for (ViewRow row : result) {
+            System.out.println(row);
+            res.add(jsonDocumentToEntity(row.document()));
+        }
+        return res;
     }
 
     /**
@@ -129,12 +140,33 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
      * @param jsonDocument document to transform
      * @return entity of JsonDocument
      */
-    public abstract T jsonDocumentToEntity(JsonDocument jsonDocument);
+    protected abstract T jsonDocumentToEntity(JsonDocument jsonDocument);
 
     /**
      * Transform an entity to JsonDocument
      * @param entity to transform
      * @return jsonDoc of entity
      */
-    public abstract JsonDocument entityToJsonDocument(T entity);
+    protected abstract JsonDocument entityToJsonDocument(T entity);
+
+    private void createViewAll()
+    {
+        DesignDocument designDoc = currentBucket.bucketManager().getDesignDocument("designDoc");
+
+            String viewName = "by_datatype_"+datatype;
+            String mapFunction =
+                    "function (doc, meta) {\n" +
+                            " if(doc.properties.datatype && doc.properties.datatype == '"+ datatype + "') \n" +
+                            "   { emit(doc.firstname);}\n" +
+                            "}";
+            designDoc.views().add(DefaultView.create(viewName, mapFunction, ""));
+            currentBucket.bucketManager().upsertDesignDocument(designDoc);
+    }
+
+    public void createDesignDocument()
+    {
+            List<View> views = new ArrayList<View>();
+            DesignDocument designDoc = DesignDocument.create("designDoc", views);
+            currentBucket.bucketManager().insertDesignDocument(designDoc);
+    }
 }

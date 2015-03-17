@@ -14,20 +14,7 @@ public abstract class AbstractEntity {
     /**
      * Type of entity
      */
-    protected String type;
-
-    public long getId() {
-        return id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setId(long id)
-    {
-        this.id=id;
-    }
+    protected String datatype;
 
     /**
      * Basic contruct, assign a random id
@@ -36,5 +23,18 @@ public abstract class AbstractEntity {
     {
         Random random = new Random();
         id = random.nextLong();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id=id;
+    }
+
+    public String getDataType() {
+        return datatype;
     }
 }
