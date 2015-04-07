@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+      <ScrollView
+        android:id="@+id/scroller2"
+        android:layout_width="fill_parent"
+        android:layout_height="150dip">
+        <LinearLayout
+            android:id="@+id/actions2"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            />
+    </ScrollView>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Valider"
+
+        android:id="@+id/buttonValidate2"
+        android:layout_below="@+id/scroller2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <com.mapquest.android.maps.MapView
+        android:id="@+id/map2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true"
+        android:enabled="true"
+        android:apiKey=""
+        android:layout_below="@+id/buttonValidate2" />
+    
+
+</RelativeLayout>
