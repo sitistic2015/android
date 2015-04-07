@@ -21,6 +21,38 @@ import static org.junit.Assert.assertNull;
  */
 public class GeoImageDAOTest {
 
+    public void testGetAll()
+    {
+        //dao.createDesignDocument();
+        for(GeoImage g: dao.getAll()){
+            System.out.println(g);
+        }
+    }
+
+    public void testInsertSomePics() throws IOException {
+        ArrayList<String> strPath = new ArrayList<String>();
+        strPath.add("/home/alban/Images/2288305623_c21c8d2618_z.jpg");
+        strPath.add("/home/alban/Images/2288305623_c21c8d2618_z.jpg");
+        strPath.add("/home/alban/Images/Adult-Male-Gelada.jpg");
+        strPath.add("/home/alban/Images/franziskaner.png");
+        strPath.add("/home/alban/Images/GELADA 3.jpg");
+        strPath.add("/home/alban/Images/supercopter-3965283semdn.jpg");
+        for(String s : strPath)
+        {
+            Path imgPath = Paths.get(s);
+
+        byte[] byteArray = Files.readAllBytes(imgPath);
+        String base64String = Base64.encode(byteArray);
+
+        // on crée le document
+        GeoImage geoImage = new GeoImage();
+            geoImage.setCoordinates(new Position(4.0, 9.0, 19.0));
+            geoImage.setImageIn64(base64String);
+        dao.create(geoImage);
+        }
+    }
+
+
     private static GeoImageDAO dao = new GeoImageDAO();
     private static byte[] imagesBytes = new byte[16];
     @BeforeClass
@@ -111,37 +143,5 @@ public class GeoImageDAOTest {
         // suppression
         dao.delete(geoImage);
         assertNull(dao.getById(idInbase));
-    }
-
-    public void testGetAll()
-    {
-        //dao.createDesignDocument();
-        for(GeoImage g: dao.getAll()){
-            System.out.println(g);
-        }
-    }
-
-
-    public void testInsertSomePics() throws IOException {
-        ArrayList<String> strPath = new ArrayList<String>();
-        strPath.add("/home/alban/Images/2288305623_c21c8d2618_z.jpg");
-        strPath.add("/home/alban/Images/2288305623_c21c8d2618_z.jpg");
-        strPath.add("/home/alban/Images/Adult-Male-Gelada.jpg");
-        strPath.add("/home/alban/Images/franziskaner.png");
-        strPath.add("/home/alban/Images/GELADA 3.jpg");
-        strPath.add("/home/alban/Images/supercopter-3965283semdn.jpg");
-        for(String s : strPath)
-        {
-            Path imgPath = Paths.get(s);
-
-        byte[] byteArray = Files.readAllBytes(imgPath);
-        String base64String = Base64.encode(byteArray);
-
-        // on crée le document
-        GeoImage geoImage = new GeoImage();
-            geoImage.setCoordinates(new Position(4.0, 9.0, 19.0));
-            geoImage.setImageIn64(base64String);
-        dao.create(geoImage);
-        }
     }
 }

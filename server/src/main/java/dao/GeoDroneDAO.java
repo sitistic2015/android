@@ -27,7 +27,7 @@ public class GeoDroneDAO extends AbstractDAO<GeoDrone>{
 
         try {
             JsonObject content = jsonDocument.content();
-            if (Constant.DATATYPE_GEOIMAGE.equals(((JsonObject)content.get("properties")).get("datatype"))) {
+            if (datatype.equals(((JsonObject)content.get("properties")).get("datatype"))) {
                 geoDrone.setId(Long.parseLong(jsonDocument.id()));
                 geoDrone.setCoordinates(Tools.jsonArrayToPosition((JsonArray) content.get("coordinates")));
             } else {

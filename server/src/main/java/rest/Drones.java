@@ -40,7 +40,7 @@ public class Drones {
     @GET
     @Path("{id}")
     //  @Consumes({ MediaType.APPLICATION_JSON })
-    public GeoDrone getDroneById(@PathParam("id") int id) {
+    public GeoDrone getDroneById(@PathParam("id") long id) {
         GeoDroneDAO gDD = new GeoDroneDAO();
         gDD.connect();
         GeoDrone res= gDD.getById(id);
